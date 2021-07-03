@@ -18,3 +18,4 @@ nodeRunner(problemName, code, (result, err) =>{
     console.log(result, err);
 });
 
+console.log(code);
