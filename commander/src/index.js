@@ -1,13 +1,20 @@
 const nodeRunner = require("./adapters/nodeRunner.js");
-
-const problemName = "addNums"; 
-const code = `
-module.exports = (n1, n2) => {
-
-    return n1 + n2; 
-}; 
-`;
+const sandboxScript = require("./adapters/script.js");
+const problemName = "fib"; 
+const probs = require("./problems/probs");
 
 
-nodeRunner(problemName, code);
+const code = sandboxScript(`
+function fib(a) {
+    if (a <= 1) return 1;
+  
+    return fib(a - 1) + fib(a - 2);
+  }
+  
+`, probs.fib.name, probs.fib.argNums);
+
+console.log(code);
+nodeRunner(problemName, code, (result, err) =>{
+    console.log(result, err);
+});
 

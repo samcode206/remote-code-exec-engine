@@ -4,8 +4,8 @@
   "description": "code execution engine built to run code against predefinded test cases ",
   "main": "index.js",
   "scripts": {
-    "start" : "node src/index.js",
-    "clean" : "node src/cleanup.js"
+    "start": "node src/index.js",
+    "clean": "node src/cleanup.js"
   },
   "author": "sameem hadi",
   "license": "ISC",
