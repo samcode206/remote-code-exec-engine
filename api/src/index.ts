@@ -22,9 +22,15 @@ interface CodeAttrs {
   problem: string; 
 }
 
-server.post<{Body: CodeAttrs}>('/code', (request, reply) => {
+server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
   const {body} = request; 
    
+  const job = await codeQueue.add(body);
+
+  const res = await job.finished();
+
+
+  console.log(res); 
   reply.send({ack: true});
 
 }); 
