@@ -23,6 +23,7 @@ server.get('/', opts, async (request, reply) => {
 });
 
 
+
 (async () => {
     try {
       await server.listen(3000)
