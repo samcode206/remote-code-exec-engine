@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "fastify": "^3.18.1",
-    "fastify-plugin": "^3.0.0"
-  }
-}
