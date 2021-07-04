@@ -32,7 +32,7 @@ server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
 
 
   console.log(res); 
-  reply.send({ack: true});
+  reply.send({results: res});
 
   } catch(err){
     console.log(err);
