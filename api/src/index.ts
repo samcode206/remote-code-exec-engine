@@ -24,6 +24,7 @@ interface CodeAttrs {
 
 server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
   try{
+    console.log("recieved request at: ", new Date());
     const {body} = request; 
    
   const job = await codeQueue.add(body);
@@ -32,7 +33,7 @@ server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
 
 
   console.log(res); 
-  reply.send({results: res});
+  reply.send({results: res, dateResolved: Date.now() / 1000});
 
   } catch(err){
     console.log(err);
