@@ -23,7 +23,8 @@ interface CodeAttrs {
 }
 
 server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
-  const {body} = request; 
+  try{
+    const {body} = request; 
    
   const job = await codeQueue.add(body);
 
@@ -32,6 +33,12 @@ server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
 
   console.log(res); 
   reply.send({ack: true});
+
+  } catch(err){
+    console.log(err);
+    reply.send({});
+  }
+  
 
 }); 
 

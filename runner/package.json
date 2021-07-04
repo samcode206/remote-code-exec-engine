@@ -10,6 +10,7 @@
   "author": "sameem hadi",
   "license": "ISC",
   "dependencies": {
+    "bull": "^3.22.10",
     "dockerode": "^3.3.0"
   }
 }
