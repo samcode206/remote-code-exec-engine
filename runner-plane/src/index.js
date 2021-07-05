@@ -12,4 +12,4 @@ const codeQueue = new Queue("run-code", {
 
 
 
-codeQueue.process(4,`${__dirname}/process.js`);
+codeQueue.process(8,`${__dirname}/process.js`);

@@ -1,6 +1,5 @@
 const Dockerode = require("dockerode");
 
-
 const docker = new Dockerode();
 
 const getConfig = () => ({
@@ -14,7 +13,7 @@ const getConfig = () => ({
             Privileged: false,
             MemoryReservation: 7000000,
             CpuQuota: 1000000,
-        }
+        },
     }
 );
 
@@ -29,6 +28,7 @@ async function nodeRunner(fn, code, cb){
     const container = await docker.createContainer(getConfig());
     console.log("created container at ", Date.now() / 1000);
     await container.start();
+
     console.log("started container at ", Date.now() / 1000);
     await (await container.exec(writeScript(fn, code))).start();
     console.log("wrote to container at ", Date.now() / 1000);
