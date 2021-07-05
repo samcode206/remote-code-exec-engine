@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bull": "^3.22.10",
-    "dockerode": "^3.3.0"
+    "dockerode": "^3.3.0",
+    "node-worker-threads-pool": "^1.5.0"
   }
 }

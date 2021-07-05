@@ -1,6 +1,10 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import Queue from 'bull';
+const cluster = require("cluster");
+// const numCPUs = require('os').cpus().length;
 
+const EventEmitter = require( "events" );  
+EventEmitter.defaultMaxListeners = 100;
 
 const codeQueue = new Queue("run-code", {
   redis:{
@@ -10,12 +14,19 @@ const codeQueue = new Queue("run-code", {
 });
 
 
+if (cluster.isMaster) {
+  // Fork workers.
+  for (var i = 0; i < 2; i++) {
+    cluster.fork();
+  }
 
-
-const server: FastifyInstance = Fastify();
-
-
-
+  cluster.on('exit', function(worker: { process: { pid: string; }; }) {
+    console.log('worker ' + worker.process.pid + ' died');
+    cluster.fork();
+  });
+} else {
+  // Worker processes have a http server.
+  const server: FastifyInstance = Fastify();
 
 interface CodeAttrs {
   code: string;
@@ -24,7 +35,7 @@ interface CodeAttrs {
 
 server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
   try{
-    console.log("recieved request at: ", new Date());
+    console.log("recieved request at: ", Date.now() / 1000);
     const {body} = request; 
    
   const job = await codeQueue.add(body);
@@ -32,7 +43,7 @@ server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
   const res = await job.finished();
 
 
-  console.log(res); 
+  console.log("success");
   reply.send({results: res, dateResolved: Date.now() / 1000});
 
   } catch(err){
@@ -84,3 +95,6 @@ server.route({
     };
   })();
 
+
+    
+}

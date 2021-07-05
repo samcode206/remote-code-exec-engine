@@ -2,10 +2,6 @@ const Queue = require("bull");
 
 
 
-// const problemName = "fib"; 
-const probs = require("./problems/probs");
-
-
 const codeQueue = new Queue("run-code", {
   redis:{
     port: 6379,
@@ -13,5 +9,7 @@ const codeQueue = new Queue("run-code", {
   }
 });
 
-codeQueue.process(8,`${__dirname}/process.js`);
 
+
+
+codeQueue.process(4,`${__dirname}/process.js`);

@@ -5,8 +5,8 @@ const probs = require("./problems/probs");
 
 
 module.exports = function(job, done){
-
-    console.log("recieved job at: ", new Date());
+    
+    console.log("recieved job with id" + job.id + "at:" , new Date());
     const code = job.data.code;
     const prob = job.data.problem; 
   
@@ -15,16 +15,13 @@ module.exports = function(job, done){
 
     nodeRunner(prob, boxedCode, (res, err) =>{
       if (!err){
-        console.log(res);
+        console.log("complete");
         const r = res.replace(/[^\x20-\x7E]/g, "");
         done(null, r);
-        console.log(r);
-        return Promise.resolve(r);
 
       } else {
-        console.log(err);
+        console.log("failed");
         done(null, err);
-        return Promise.reject(err);
       }
     });
 };
