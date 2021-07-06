@@ -1,9 +1,8 @@
-import Fastify, { FastifyInstance } from 'fastify';
-import Queue from 'bull';
-const cluster = require("cluster");
-// const numCPUs = require('os').cpus().length;
+import Fastify from 'fastify';
+import cluster from "cluster";
+import EventEmitter from "events";
+import Queue from "bee-queue";
 
-const EventEmitter = require( "events" );  
 EventEmitter.defaultMaxListeners = 100;
 
 const codeQueue = new Queue("run-code", {
@@ -20,37 +19,43 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', function(worker: { process: { pid: string; }; }) {
+  cluster.on('exit', function(worker) {
     console.log('worker ' + worker.process.pid + ' died');
     cluster.fork();
   });
+
 } else {
   // Worker processes have a http server.
-  const server: FastifyInstance = Fastify();
+  const server = Fastify();
 
-interface CodeAttrs {
-  code: string;
-  problem: string; 
-}
 
-server.post<{Body: CodeAttrs}>('/code', async (request, reply) => {
-  try{
+server.post('/code', (request, reply) => {
+
     console.log("recieved request at: ", Date.now() / 1000);
     const {body} = request; 
    
-  const job = await codeQueue.add(body);
 
-  const res = await job.finished();
+   const job = codeQueue.createJob(body);
+   
+   job
+   .save()
+   .then(job => {
+     console.log(`issued job #${job.id} at: `, Date.now() /1000);
+   })
+   .catch(err => {
+     console.error(err);
+   });
 
+  job.on("succeeded", result => {
+      console.log("success");
+      reply.send({results: result, dateResolved: Date.now() / 1000});
+  });
 
-  console.log("success");
-  reply.send({results: res, dateResolved: Date.now() / 1000});
-
-  } catch(err){
+  job.on("failed", err => {
     console.log(err);
-    reply.send({});
-  }
-  
+    reply.send({message: err});
+  });
+ 
 
 }); 
 
