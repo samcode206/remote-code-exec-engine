@@ -1,5 +1,5 @@
-const nodeRunner = require("./adapters/nodeRunner.js");
-const sandboxScript = require("./adapters/script.js");
+const nodeRunner = require("./adapters/javascript/nodeRunner.js");
+const sandboxScript = require("./adapters/javascript/nodeRunner");
 // const problemName = "fib"; 
 const probs = require("./problems/probs");
 

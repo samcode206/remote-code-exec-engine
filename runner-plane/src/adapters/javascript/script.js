@@ -1,4 +1,4 @@
-const parseArgs = require("../problems/parseArgs.js");
+const parseArgs = require("../../problems/parseArgs.js");
 
 const sandboxScript = (code, problemName, numArgs) => `
 const {VM, VMScript} = require("vm2"); 
