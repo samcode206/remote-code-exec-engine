@@ -1,0 +1,20 @@
+{
+  "name": "rce",
+  "version": "1.0.0",
+  "description": "code execution engine built to run code against predefinded test cases",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-dev --poll src/index.ts"
+  },
+  "author": "sameem hadi",
+  "license": "ISC",
+  "dependencies": {
+    "@types/bull": "^3.15.1",
+    "@types/dockerode": "^3.2.3",
+    "@types/node": "^16.0.0",
+    "bull": "^3.22.10",
+    "dockerode": "^3.3.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  }
+}
