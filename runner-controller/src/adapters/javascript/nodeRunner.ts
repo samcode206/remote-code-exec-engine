@@ -1,7 +1,5 @@
-import Dockerode from "dockerode";
+import Container from "../docker/Docker";
 
-
-const docker = new Dockerode();
 
 const getConfig = () => ({
         Tty: true,
@@ -18,37 +16,22 @@ const getConfig = () => ({
     }
 );
 
-const writeScript = (fn : string, code : string) => ({Cmd: ["sh", "start.sh", fn + ".js", code], AttachStderr: true, AttachStdout: true});
-const runTests = (fn : string) => ({Cmd: ["jest", fn + ".test.js"], AttachStderr: true, AttachStdout: true});
 
 
+async function runNode(fn: string, code: string, cb: any){
+    const nodeContainer = new Container(getConfig());
 
-async function nodeRunner(fn :string, code: string, cb: any){
-    let res = ""; 
-   
-    const container = await docker.createContainer(getConfig());
-    console.log("created container at ", Date.now() / 1000);
-    await container.start();
+    // creates the container with given settings 
+    await nodeContainer.create();
 
-    console.log("started container at ", Date.now() / 1000);
-    await (await container.exec(writeScript(fn, code))).start({});
-    console.log("wrote to container at ", Date.now() / 1000);
-    const stream = await (await container.exec(runTests(fn))).start({});
-    console.log("started tests at ", Date.now() / 1000);
+    // starts the container
+    await nodeContainer.run();
 
-    stream.on("data", (data)=>{
-        res = res + data.toString(); 
-    });
+    // streams the container output after instructions to run code
+    await nodeContainer.executeAllStreamLast([
+        ["sh", "start.sh", fn + ".js", code], 
+        ["jest", fn + ".test.js"],
+    ], cb);
+};
 
-    stream.on("end", ()=>{
-        console.log("ended at ", Date.now() / 1000);
-        cb(res, null);
-        container.inspect((err, stats)=>{
-            if (err) cb(null,err);
-            if (stats?.State.Running === true) container.stop();
-        });
-    });
-
-}; 
-
-export default nodeRunner;
+export default runNode;

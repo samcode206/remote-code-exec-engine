@@ -19,7 +19,7 @@ interface jobAttrs {
 };
 
 
-codeQueue.process(8, (job : Job<jobAttrs>, done : DoneCallback<string>) =>{
+codeQueue.process(4, (job : Job<jobAttrs>, done : DoneCallback<string>) =>{
   console.log("recieved job with id" + job.id + "at:" , new Date());
   const code = job.data.code;
   const prob = job.data.problem; 
