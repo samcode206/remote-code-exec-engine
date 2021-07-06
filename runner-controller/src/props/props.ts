@@ -1,3 +1,5 @@
+import {QueueSettings} from "bee-queue";
+
 export type OrchestratorAttrs = {
   queueName : string
   setting: QueueSettings
