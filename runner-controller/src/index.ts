@@ -1,33 +1,45 @@
-// import Bull, {Job} from 'bull';
-import nodeRunner from "./adapters/javascript/nodeRunner";
-import sandboxScript from "./adapters/javascript/script";
-import probs from "./problems/probs";
-import Queue, {Job, DoneCallback} from "bee-queue";
+import Queue, {Job, DoneCallback, QueueSettings} from "bee-queue";
+import NodeJs from "./adapters/javascript/nodeRunner";
 
-
-const codeQueue = new Queue("run-code", {
-  redis:{
-    port: 6379,
-    host: "127.0.0.1",
-  }
-});
-
+type OrchestratorAttrs = {
+  queueName : string
+  setting: QueueSettings
+  concurrency: number;
+};
 
 interface jobAttrs {
   code : string
   problem : string
+  lang: string
 };
 
+enum languages {
+  javascript = "javascript",
+  python = "python",
+};
 
-codeQueue.process(4, (job : Job<jobAttrs>, done : DoneCallback<string>) =>{
-  console.log("recieved job with id" + job.id + "at:" , new Date());
-  const code = job.data.code;
-  const prob = job.data.problem; 
+class Orchestrator {
+  private queue : Queue;
+  // default to one for concurrency 
+  private concurrency : number;
+  constructor(optns : OrchestratorAttrs){
+    this.concurrency = optns.concurrency;
+    this.queue = new Queue(optns.queueName, optns.setting);
+  };
 
-  const boxedCode = sandboxScript(code, prob, probs.fib.argNums);
+  listenForJobs(){
+    this.queue.process(this.concurrency, this.processor);
+  };
 
 
-  nodeRunner(prob, boxedCode, (res : any, err: any) =>{
+  processor(job : Job<jobAttrs>, done : DoneCallback<string>){
+    console.log("recieved job with id" + job.id + "at:" , new Date());
+  const code : string = job.data.code;
+  const prob : string = job.data.problem; 
+  const lang : string = job.data.lang; 
+
+  // the callback responsive for calling done 
+  const cb = (res : any, err : any)=>{
     if (!err){
       console.log("complete");
       const r = res.replace(/[^\x20-\x7E]/g, "");
@@ -35,9 +47,35 @@ codeQueue.process(4, (job : Job<jobAttrs>, done : DoneCallback<string>) =>{
 
     } else {
       console.log("failed");
-      done(null, err);
+      done(err);
     };
-  });
-}
-);
+  };
 
+  if (lang === languages.javascript){
+    // nodejs 
+    const js = new NodeJs(code, prob, 1);
+    js.run(cb);
+
+  } 
+  else if (lang === languages.python){
+
+  }
+   else {
+    cb(null, new Error("language not supported!"));
+  }
+  };
+
+};
+
+
+new Orchestrator({
+  queueName: "run-code",
+  setting: {
+    redis: {
+      port: 6379,
+      host: "127.0.0.1"
+    }
+  },
+  concurrency: 4,
+})
+.listenForJobs();

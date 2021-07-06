@@ -5,3 +5,4 @@ To Add:
 1. add more layers of security around the container 
 2. add support for more languages (java, c++, go, c#)
 3. add more pre-defined test case (coding challenges, currently there is only fibonachi for testing purposes)
+4. add authentication to allow authenticated users to submit their own testcases 
