@@ -1,22 +1,7 @@
 import Queue, {Job, DoneCallback, QueueSettings} from "bee-queue";
 import NodeJs from "./adapters/javascript/nodeRunner";
+import {OrchestratorAttrs, jobAttrs, languages} from "./props/props";
 
-type OrchestratorAttrs = {
-  queueName : string
-  setting: QueueSettings
-  concurrency: number;
-};
-
-interface jobAttrs {
-  code : string
-  problem : string
-  lang: string
-};
-
-enum languages {
-  javascript = "javascript",
-  python = "python",
-};
 
 class Orchestrator {
   private queue : Queue;

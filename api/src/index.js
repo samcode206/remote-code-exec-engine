@@ -87,7 +87,7 @@ server.route({
 // start the server iife 
 (async () => {
     try {
-      await server.listen(5000)
+      await server.listen(80, "0.0.0.0")
   
       const address = server.server.address();
       const port = typeof address === 'string' ? address : address?.port;
