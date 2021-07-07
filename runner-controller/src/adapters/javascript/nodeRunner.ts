@@ -1,4 +1,4 @@
-import Container from "../docker/Docker";
+import Container from "../../core/Docker";
 import parseArgs from "../../problems/parseArgs";
 import Runner from "../../core/Runner";
 

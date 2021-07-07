@@ -1,5 +1,5 @@
 import Runner from "../../core/Runner";
-import Container from "../docker/Docker";
+import Container from "../../core/Docker";
 
 export default class Python3 extends Runner {
     private config = {

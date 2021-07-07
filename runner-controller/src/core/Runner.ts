@@ -4,7 +4,6 @@ export default abstract class Runner {
     constructor(code: string, problem : string, numArgs : number){
         this.codeToRun = this.sandbox(code, problem, numArgs);
         this.problemName = problem;
-
     };
 
     abstract sandbox(code : string, problemName : string, numArgs : number): string;
