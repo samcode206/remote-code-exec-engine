@@ -1,8 +1,8 @@
 import Container from "../docker/Docker";
 import parseArgs from "../../problems/parseArgs";
+import Runner from "../../core/Runner";
 
-export default class NodeJs {
-
+export default class NodeJs extends Runner {
     private config = {
         Tty: true,
         Image: 'node-runner',
@@ -18,11 +18,12 @@ export default class NodeJs {
     };
 
     private fileExt : string = ".js"; 
-    public javascript : string;  
-    public problemName : string;
+    // public codeToRun : string;  
+    // public problemName : string;
     constructor(code: string, problem : string, numArgs : number){
-        this.problemName = problem; 
-        this.javascript = this.sandbox(code, problem, numArgs);
+        super(code, problem, numArgs);
+        // this.problemName = problem; 
+        // this.codeToRun = this.sandbox(code, problem, numArgs);
     };
 
     async run(cb : any){
@@ -36,12 +37,12 @@ export default class NodeJs {
     
         // streams the container output after instructions to run code
         await nodeContainer.executeAllStreamLast([
-            ["sh", "start.sh", this.problemName + this.fileExt, this.javascript], 
+            ["sh", "start.sh", this.problemName + this.fileExt, this.codeToRun], 
             ["jest", this.problemName + ".test" + this.fileExt],
         ], cb);
     };
 
-    sandbox(code : string, problemName : string, numArgs : number){
+    sandbox(code : string, problemName : string, numArgs : number) :string{
         return `
         const {VM, VMScript} = require("vm2"); 
         const vm = new VM({
@@ -59,42 +60,8 @@ export default class NodeJs {
         }; 
         module.exports = ${problemName}; 
         `;
-    }
-    
+    };
+    // sandboxWithGlobal(code , problemName, numArgs, globals){
+    //     // adds global variables
+    // };
 };
-
-
-// const getConfig = () => ({
-//         Tty: true,
-//         Image: 'node-runner',
-//         Cmd: ["sh"],
-//         HostConfig: {
-//             NetworkMode: 'none',
-//             AutoRemove: true,
-//             Memory: 100000000,
-//             Privileged: false,
-//             MemoryReservation: 7000000,
-//             CpuQuota: 1000000,
-//         },
-//     }
-// );
-
-
-
-// async function runNode(problemName: string, code: string, cb: any){
-//     const nodeContainer = new Container(getConfig());
-
-//     // creates the container with given settings 
-//     await nodeContainer.create();
-
-//     // starts the container
-//     await nodeContainer.run();
-
-//     // streams the container output after instructions to run code
-//     await nodeContainer.executeAllStreamLast([
-//         ["sh", "start.sh", problemName + ".js", code], 
-//         ["jest", problemName + ".test.js"],
-//     ], cb);
-// };
-
-// export default runNode;

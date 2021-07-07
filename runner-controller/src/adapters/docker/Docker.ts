@@ -1,7 +1,7 @@
 import Dockerode from "dockerode";
 
 
-class Docker {
+abstract class Docker {
     protected docker : Dockerode;
     constructor(){
         this.docker = new Dockerode();

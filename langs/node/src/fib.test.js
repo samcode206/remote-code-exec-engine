@@ -9,7 +9,9 @@ it("calculate the right fib sequence", () =>{
 it("calculate the right fib sequence number 8", () =>{
     const r = fib(8);
     expect(r).toEqual(34); 
-})
+});
+
+
 
 it("calculate the right fib sequence give basecase", () =>{
     const r = fib(1);
