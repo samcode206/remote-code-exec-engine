@@ -1,5 +1,6 @@
 import Queue, {Job, DoneCallback} from "bee-queue";
 import NodeJs from "../adapters/javascript/nodeRunner";
+import configFromEnv from "../config/configFromEnv";
 import {OrchestratorAttrs, jobAttrs, languages} from "../props/props";
 
 class Orchestrator {
@@ -52,13 +53,15 @@ class Orchestrator {
   };
 
 
+
+console.log(configFromEnv)
   export default new Orchestrator({
     queueName: "run-code",
     setting: {
       redis: {
-        port: 6379,
-        host: "127.0.0.1"
+        port: configFromEnv.redisPort,
+        host: configFromEnv.redisHost
       }
     },
-    concurrency: 2,
+    concurrency: configFromEnv.concurrentJobs,
   });
